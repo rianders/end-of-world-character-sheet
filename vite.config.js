@@ -3,5 +3,8 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/end-of-world-character-sheet/'
+  base: '/end-of-world-character-sheet/',
+  resolve: {
+    extensions: ['.js', '.jsx', '.json']
+  }
 })

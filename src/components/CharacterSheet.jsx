@@ -292,6 +292,62 @@ const CharacterSheet = ({ character: initialCharacter, isEditable, onSave }) => 
           ))}
         </div>
       </div>
+    );
+  };
+
+  return (
+    <div className="bg-white shadow-md rounded p-4">
+      <div className="mb-4">
+        <input
+          type="text"
+          value={character.name}
+          onChange={(e) => setCharacter({...character, name: e.target.value})}
+          className={`text-2xl font-bold w-full ${isEditable ? 'border-b border-gray-300 focus:outline-none focus:border-gray-500' : 'border-b-0'}`}
+          placeholder="Character Name"
+          readOnly={!isEditable}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <div className="border border-gray-700 p-2">
+          <div className="text-sm font-bold uppercase mb-2 bg-gray-700 text-white p-1 text-center">
+            Physical
+          </div>
+          <div className="flex justify-around mb-2">
+            {renderStatDial('physical', 'dexterity', character.physical.dexterity)}
+            {renderStatDial('physical', 'vitality', character.physical.vitality)}
+          </div>
+          {renderFeatures('physical', character.physical.features)}
+          {renderStressResistance('physical')}
+        </div>
+
+        <div className="border border-gray-700 p-2">
+          <div className="text-sm font-bold uppercase mb-2 bg-gray-700 text-white p-1 text-center">
+            Mental
+          </div>
+          <div className="flex justify-around mb-2">
+            {renderStatDial('mental', 'logic', character.mental.logic)}
+            {renderStatDial('mental', 'willpower', character.mental.willpower)}
+          </div>
+          {renderFeatures('mental', character.mental.features)}
+          {renderStressResistance('mental')}
+        </div>
+
+        <div className="border border-gray-700 p-2">
+          <div className="text-sm font-bold uppercase mb-2 bg-gray-700 text-white p-1 text-center">
+            Social
+          </div>
+          <div className="flex justify-around mb-2">
+            {renderStatDial('social', 'charisma', character.social.charisma)}
+            {renderStatDial('social', 'empathy', character.social.empathy)}
+          </div>
+          {renderFeatures('social', character.social.features)}
+          {renderStressResistance('social')}
+        </div>
+      </div>
+
+      {renderTraumas()}
+      {renderEquipment()}
       
       {isEditable && (
         <div className="mt-4 text-center">

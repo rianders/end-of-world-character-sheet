@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import CharacterSheet from './components/CharacterSheet';
 import CharacterList from './components/CharacterList';
 import BobPreset from './presets/BobPreset';
+// Assuming the logo will be in the assets folder
 import logoImg from './assets/end-of-world-logo.svg';
 
 function App() {
