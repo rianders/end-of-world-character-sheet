@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ] # or 'master' depending on your default branch name
+    branches: [ main ]  # or master, or whatever your default branch is
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
@@ -11,7 +11,7 @@ permissions:
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment
+# Allow one concurrent deployment
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -20,29 +20,62 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
-      
-      - name: Setup Node
+
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '18'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+        
+      - name: List files before build
+        run: ls -la
+        
       - name: Build
         run: npm run build
+        
+      - name: Verify static build output
+        run: |
+          echo "Checking for index.html in dist directory..."
+          if [ -f dist/index.html ]; then
+            echo "✅ index.html found - static build looks good"
+            cat dist/index.html | head -10
+          else
+            echo "❌ index.html not found in dist directory"
+            echo "Build may not be producing static files correctly"
+            exit 1
+          fi
+      
+      - name: Debug - Check build output
+        run: |
+          echo "Checking if dist directory exists..."
+          ls -la
+          echo "Contents of dist directory:"
+          ls -la dist || echo "dist directory not found!"
       
       - name: Setup Pages
         uses: actions/configure-pages@v3
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
+        id: upload-artifact
         with:
-          path: './dist' # This is where Vite outputs the build files
-
+          path: 'dist'
+          
+      - name: Verify artifact was created
+        run: |
+          echo "Checking if artifact was created successfully"
+          echo "Artifact name: ${{ steps.upload-artifact.outputs.artifact-name }}"
+          ls -la $RUNNER_TEMP
+          
+      - name: Artifact info
+        if: always()
+        run: echo "The artifact ${{ steps.upload-artifact.outputs.artifact-name }} was uploaded"
+          
   deploy:
     environment:
       name: github-pages
