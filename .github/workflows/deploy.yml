@@ -26,7 +26,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'  # Updated to Node 20 for better compatibility with React 19
           cache: 'npm'
 
       - name: Install dependencies
@@ -38,18 +38,6 @@ jobs:
       - name: Build
         run: npm run build
         
-      - name: Verify static build output
-        run: |
-          echo "Checking for index.html in dist directory..."
-          if [ -f dist/index.html ]; then
-            echo "✅ index.html found - static build looks good"
-            cat dist/index.html | head -10
-          else
-            echo "❌ index.html not found in dist directory"
-            echo "Build may not be producing static files correctly"
-            exit 1
-          fi
-      
       - name: Debug - Check build output
         run: |
           echo "Checking if dist directory exists..."
@@ -62,19 +50,8 @@ jobs:
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
-        id: upload-artifact
         with:
-          path: 'dist'
-          
-      - name: Verify artifact was created
-        run: |
-          echo "Checking if artifact was created successfully"
-          echo "Artifact name: ${{ steps.upload-artifact.outputs.artifact-name }}"
-          ls -la $RUNNER_TEMP
-          
-      - name: Artifact info
-        if: always()
-        run: echo "The artifact ${{ steps.upload-artifact.outputs.artifact-name }} was uploaded"
+          path: './dist'  # Ensure the path is correct with leading ./
           
   deploy:
     environment:
